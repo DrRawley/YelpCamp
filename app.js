@@ -6,9 +6,7 @@ const Campground = require('./models/campground'); //Include model
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 // The following mongoose options are no longer needed
-// {   useNewUrlParser: true,
-//     useCreateIndex: true,
-//     useUnifiedTopology: true}
+// { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
 
 const db = mongoose.connection; //db is just a shortcut to avoid typing mongoose.connection all the time
 db.on("error", console.error.bind(console, "connection error:"));
@@ -33,12 +31,18 @@ app.get('/campgrounds/', async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
 });
+//Route to get form for a new campground
+app.get('/campgrounds/new', (req, res) => {
+    res.render('campgrounds/new');
+});
 //Show route for single camapground details
 app.get('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/show', { campground });
 });
+
+
 
 //Test the db by making a new campground
 // app.get('/makecampground', async (req, res) => {
