@@ -16,6 +16,8 @@ db.once("open", () => {
 
 app.set('view engine', 'ejs'); //set default view engine to ejs
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.listen(3000, () => {
     console.log("Listening on port 3000...");
@@ -34,6 +36,16 @@ app.get('/campgrounds/', async (req, res) => {
 //Route to get form for a new campground (come before :id or crash)
 app.get('/campgrounds/new/', (req, res) => {
     res.render('campgrounds/new');
+});
+//POST route to submit new campground
+app.post('/campgrounds/', async (req, res) => {
+    console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
+    const newCampground = new Campground(req.body.campground);
+    await newCampground.save().then(r => {
+        res.redirect(`campgrounds/${r._id}`);
+    });
+    // or can do res.redirect(`campgrounds/%{newCampground._id}`) without .then() 
+    // since mongooses creates the id
 });
 //Show route for single camapground details
 app.get('/campgrounds/:id', async (req, res) => {

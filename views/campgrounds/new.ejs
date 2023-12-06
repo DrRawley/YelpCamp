@@ -9,10 +9,12 @@
 
 <body>
     <form action="/campgrounds" method="post">
-        <label for="title">Name of the campground: </label>
-        <input type="text" name="title" id="title">
-        <br><label for="location">Location of the campground: </label>
-        <input type="text" name="location" id="location">
+        <div><label for="title">Name of the campground: </label>
+            <input type="text" name="campground[title]" id="title">
+        </div>
+        <div><label for="location">Location of the campground: </label>
+            <input type="text" name="campground[location]" id="location">
+        </div>
         <button type="submit">Submit</button>
     </form>
     <br><a href="/campgrounds/">Cancel</a>
