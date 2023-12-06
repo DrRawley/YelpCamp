@@ -71,21 +71,15 @@ app.put('/campgrounds/:id', async (req, res) => {
     await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
         res.redirect(`/campgrounds/${r._id}`);
     });
-
 });
+//DELETE route
+app.delete('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params;
+
+    await Campground.findByIdAndDelete(id).then(r => {
+        console.log('BALEETED!', r);
+        res.redirect('/campgrounds/');
+    });
+})
 
 
-
-//Test the db by making a new campground
-// app.get('/makecampground', async (req, res) => {
-//     const camp = new Campground({
-//         title: 'My Backyard',
-//         price: '0',
-//         description: 'cheap camping',
-//         location: 'nowhere in particular'
-//     })
-//     await camp.save().then(r => {
-//         console.log(r);
-//         res.redirect('/');
-//     })
-// })
