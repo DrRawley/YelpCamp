@@ -28,16 +28,22 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
+//Route for camapground index
+app.get('/campgrounds/', async (req, res) => {
+    const campgrounds = await Campground.find({});
+    res.render('campgrounds/index', { campgrounds });
+});
+
 //Test the db by making a new campground
-app.get('/makecampground', async (req, res) => {
-    const camp = new Campground({
-        title: 'My Backyard',
-        price: '0',
-        description: 'cheap camping',
-        location: 'nowhere in particular'
-    })
-    await camp.save().then(r => {
-        console.log(r);
-        res.redirect('/');
-    })
-})
+// app.get('/makecampground', async (req, res) => {
+//     const camp = new Campground({
+//         title: 'My Backyard',
+//         price: '0',
+//         description: 'cheap camping',
+//         location: 'nowhere in particular'
+//     })
+//     await camp.save().then(r => {
+//         console.log(r);
+//         res.redirect('/');
+//     })
+// })
