@@ -33,6 +33,12 @@ app.get('/campgrounds/', async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
 });
+//Show route for single camapground details
+app.get('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
+    res.render('campgrounds/show', { campground });
+});
 
 //Test the db by making a new campground
 // app.get('/makecampground', async (req, res) => {
