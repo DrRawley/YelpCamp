@@ -31,8 +31,8 @@ app.get('/campgrounds/', async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
 });
-//Route to get form for a new campground
-app.get('/campgrounds/new', (req, res) => {
+//Route to get form for a new campground (come before :id or crash)
+app.get('/campgrounds/new/', (req, res) => {
     res.render('campgrounds/new');
 });
 //Show route for single camapground details
