@@ -10,12 +10,14 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 
-<body>
+<body class="d-flex flex-column vh-100">
     <%- include('../partials/navbar.ejs') %>
     <main class="container mt-5">
         <%- body %>
     </main>
 
+
+    <%- include('../partials/footer.ejs') %>
 
     <!-- Bootstrap popper and js includes -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
