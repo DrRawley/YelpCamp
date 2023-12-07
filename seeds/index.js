@@ -1,9 +1,11 @@
 //Load in base directory, execute from inside node: ".load seeds/index.js"
 
+const loremIpsum = require("lorem-ipsum").loremIpsum;
 const mongoose = require('mongoose');
 const Campground = require('./models/campground'); //Include model
 const cities = require('./seeds/cities');
 const { descriptors, places } = require('./seeds/seedHelpers');
+const images = require('./seeds/images');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
@@ -33,3 +35,16 @@ const seedDB = async () => {
         await camp.save();
     }
 };
+
+//Update database
+const updateDB = async () => {
+    const campgrounds = await Campground.find({});
+    var ids = new Array();
+    for (let i in campgrounds) {
+        //await Campground.findByIdAndUpdate(campgrounds[i]._id, { image: sample(images) });
+        //await Campground.findByIdAndUpdate(campgrounds[i]._id, { description: loremIpsum({ count: 3 }) });
+        await Campground.findByIdAndUpdate(campgrounds[i]._id, { price: (Math.floor(Math.random() * 40) + 10) });
+
+    }
+    console.log(ids);
+}
