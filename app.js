@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const Campground = require('./models/campground'); //Include model
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
-
+const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 // The following mongoose options are no longer needed
@@ -17,6 +17,7 @@ db.once("open", () => {
     console.log("Database connected.");
 });
 
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs'); //set default view engine to ejs
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
