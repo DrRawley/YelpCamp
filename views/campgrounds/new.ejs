@@ -1,12 +1,36 @@
 <% layout('layouts/boilerplate') %>
-
-<form action="/campgrounds" method="post">
-    <div><label for="title">Name of the campground: </label>
-        <input type="text" name="campground[title]" id="title">
+<div class="row">
+    <h1 class="text-center">New Campground</h1>
+    <div class="col-6 offset-3">
+        <form action="/campgrounds" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="title">Name of the campground: </label>
+                <input class="form-control" type="text" name="campground[title]" id="title">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="location">Location of the campground: </label>
+                <input class="form-control" type="text" name="campground[location]" id="location">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Campground image URL: </label>
+                <input class="form-control" type="text" name="campground[image]" id="image">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="price">Price: </label>
+                <div class="input-group">
+                    <span class="input-group-text" id="price-label">$</span>
+                    <input type="text" class="form-control" name="campground[price]" id="price" placeholder="0.00"
+                        aria-describedby="price-label">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Campground description: </label>
+                <textarea class="form-control" type="text" name="campground[description]" id="description"></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success" type="submit">Submit</button>
+            </div>
+        </form>
+        <a href="/campgrounds/">Cancel</a>
     </div>
-    <div><label for="location">Location of the campground: </label>
-        <input type="text" name="campground[location]" id="location">
-    </div>
-    <button type="submit">Submit</button>
-</form>
-<br><a href="/campgrounds/">Cancel</a>
+</div>
