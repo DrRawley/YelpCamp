@@ -7,6 +7,10 @@ const methodOverride = require('method-override'); //makes it so we don't have t
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 
+//Error handing requires
+const ExpressError = require('./utils/ExpressError.js');
+const catchAsync = require('./utils/catchAsync.js');
+
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 // The following mongoose options are no longer needed
 // { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
@@ -35,52 +39,56 @@ app.get('/', (req, res) => {
 });
 
 //Route for camapground index
-app.get('/campgrounds/', async (req, res) => {
+app.get('/campgrounds/', catchAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
-});
+}));
 //Route to get form for a new campground (come before :id or crash)
 app.get('/campgrounds/new/', (req, res) => {
     res.render('campgrounds/new');
 });
 //POST route to submit new campground
-app.post('/campgrounds/', async (req, res) => {
+app.post('/campgrounds/', catchAsync(async (req, res, next) => {
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     const newCampground = new Campground(req.body.campground);
-    await newCampground.save().then(r => {
-        res.redirect(`/campgrounds/${r._id}`);
-    });
-    // or can do res.redirect(`campgrounds/%{newCampground._id}`) without .then() 
-    // since mongooses creates the id
-});
+    await newCampground.save();
+    res.redirect(`campgrounds/${newCampground._id}`);
+
+}));
 //Show route for single camapground details
-app.get('/campgrounds/:id', async (req, res) => {
+app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/show', { campground });
-});
+}));
 //Get edit form route
-app.get('/campgrounds/:id/edit', async (req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/edit', { campground });
-});
+}));
 //PUT route to submit edited campground
-app.put('/campgrounds/:id', async (req, res) => {
+app.put('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
         res.redirect(`/campgrounds/${r._id}`);
     });
-});
+}));
 //DELETE route
-app.delete('/campgrounds/:id', async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
     await Campground.findByIdAndDelete(id).then(r => {
         console.log('BALEETED!', r);
         res.redirect('/campgrounds/');
     });
-})
+}))
 
+//Set up error handlers
+
+app.use((err, req, res, next) => {
+    res.send('Something went wrong.');
+    //next(err);
+})
 
