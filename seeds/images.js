@@ -1,3 +1,4 @@
+//Collection of camping/woods related images from unsplash.com
 module.exports = [
     'https://images.unsplash.com/photo-1518602164578-cd0074062767',
     'https://images.unsplash.com/photo-1507668339897-8a035aa9527d',
