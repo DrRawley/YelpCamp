@@ -49,6 +49,7 @@ app.get('/campgrounds/new/', (req, res) => {
 });
 //POST route to submit new campground
 app.post('/campgrounds/', catchAsync(async (req, res, next) => {
+    if (!req.body.campground) throw new ExpressError('Invalid campground data.', 400);
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
@@ -85,10 +86,17 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     });
 }))
 
+//Set up 404
+app.all('*', (req, res, next) => {
+    next(new ExpressError('<img src=\"https://placehold.co/404x404?text=404&font=raleway\">', 404));
+})
+
 //Set up error handlers
 
 app.use((err, req, res, next) => {
-    res.send('Something went wrong.');
+    const { statusCode = 500, message = 'Something went wrong.' } = err;
+    res.status(statusCode).send(message);
+
     //next(err);
 })
 
