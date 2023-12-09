@@ -6,6 +6,7 @@ const Campground = require('./models/campground'); //Include model
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
+const Joi = require('joi');
 
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
@@ -49,8 +50,26 @@ app.get('/campgrounds/new/', (req, res) => {
 });
 //POST route to submit new campground
 app.post('/campgrounds/', catchAsync(async (req, res, next) => {
-    if (!req.body.campground) throw new ExpressError('Invalid campground data.', 400);
-    console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
+    //if (!req.body.campground) throw new ExpressError('Invalid campground data.', 400);
+    //console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
+    //setup a JOI schema to check results
+    const camapgroundSchema = Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required().min(0),
+            image: Joi.string().required(),
+            location: Joi.string().required(),
+            description: Joi.string().required()
+        }).required()
+    })
+    const { error } = camapgroundSchema.validate(req.body); //validate form data with schema
+    //                                                      deconstruct results
+    console.log(error);
+    if (error) {   //if there's an error log it
+        const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
+        throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
+    }  //we only see this if we make it past the client side validation.
+
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
     res.redirect(`campgrounds/${newCampground._id}`);
