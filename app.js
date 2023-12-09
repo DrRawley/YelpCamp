@@ -7,6 +7,7 @@ const methodOverride = require('method-override'); //makes it so we don't have t
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 const Joi = require('joi');
+const { camapgroundSchema } = require('./schemas.js');
 
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
@@ -30,6 +31,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
 
+//setup a JOI schema to check results
+const validateCampground = (req, res, next) => {
+
+    const { error } = camapgroundSchema.validate(req.body); //validate form data with schema
+    //                                                      deconstruct results
+    if (error) {   //if there's an error log it
+        const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
+        throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
+        //we only see this if we make it past the client side validation.
+    } else {
+        next();
+    }
+}
+
+
+
 app.listen(3000, () => {
     console.log("Listening on port 3000...");
 });
@@ -49,26 +66,7 @@ app.get('/campgrounds/new/', (req, res) => {
     res.render('campgrounds/new');
 });
 //POST route to submit new campground
-app.post('/campgrounds/', catchAsync(async (req, res, next) => {
-    //if (!req.body.campground) throw new ExpressError('Invalid campground data.', 400);
-    //console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
-    //setup a JOI schema to check results
-    const camapgroundSchema = Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            image: Joi.string().required(),
-            location: Joi.string().required(),
-            description: Joi.string().required()
-        }).required()
-    })
-    const { error } = camapgroundSchema.validate(req.body); //validate form data with schema
-    //                                                      deconstruct results
-    console.log(error);
-    if (error) {   //if there's an error log it
-        const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
-        throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
-    }  //we only see this if we make it past the client side validation.
+app.post('/campgrounds/', validateCampground, catchAsync(async (req, res, next) => {
 
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
@@ -88,7 +86,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
     res.render('campgrounds/edit', { campground });
 }));
 //PUT route to submit edited campground
-app.put('/campgrounds/:id', catchAsync(async (req, res, next) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
