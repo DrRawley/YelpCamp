@@ -129,7 +129,15 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res,
 
     res.redirect(`/campgrounds/${campground._id}`);
 }));
+//DELETE route to delete a review
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res, next) => {
+    const { id, reviewId } = req.params;
 
+    let campground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true });
+    let review = await Review.findById(reviewId);
+
+    res.redirect(`/campgrounds/${campground._id}`);
+}))
 
 // ********** ERROR ROUTE CATCHALL ***********
 //Set up 404
