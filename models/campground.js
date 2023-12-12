@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Review = require('./review')
 
 const CampgroundSchema = new Schema({
     title: String,
@@ -13,4 +14,16 @@ const CampgroundSchema = new Schema({
     }]
 });
 
+//Delete middleware
+CampgroundSchema.post('findOneAndDelete', async function (campground) {
+    console.log('Deleted --from mongoose middleware.');
+
+    if (campground) {
+        let res = await Review.deleteMany({ _id: { $in: campground.reviews } });
+        console.log(res);
+    }
+});
+
+
+//Must define middleware before the export.
 module.exports = mongoose.model('Campground', CampgroundSchema);

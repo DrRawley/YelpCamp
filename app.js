@@ -109,10 +109,9 @@ app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next
 app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
-    await Campground.findByIdAndDelete(id).then(r => {
-        console.log('BALEETED!', r);
-        res.redirect('/campgrounds/');
-    });
+    let r = await Campground.findByIdAndDelete(id);
+    console.log('BALEETED!');
+    res.redirect('/campgrounds/');
 }))
 
 // ********* REVIEW ROUTES **************
