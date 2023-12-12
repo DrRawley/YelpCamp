@@ -1,3 +1,5 @@
+//Schemas for JOI
+
 const Joi = require('joi');
 
 module.exports.camapgroundSchema = Joi.object({
