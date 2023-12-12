@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
-const Campground = require('./models/campground'); //Include model
+const Campground = require('./models/campground'); //Include models
+const Review = require('./models/review');
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
@@ -56,6 +57,8 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
+// ********* CAMPGROUND ROUTES **************
+
 //Route for camapground index
 app.get('/campgrounds/', catchAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
@@ -103,10 +106,30 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     });
 }))
 
+// ********* REVIEW ROUTES **************
+
+//Route to submit new review
+app.post('/campgrounds/:id/reviews', catchAsync(async (req, res, next) => {
+    let { id } = req.params;
+    let campground = await Campground.findById(id);
+    let review = new Review(req.body.review);
+    console.log(review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+
+    res.redirect(`/campgrounds/${campground._id}`);
+}));
+
+
+// ********** ERROR ROUTE CATCHALL ***********
 //Set up 404
 app.all('*', (req, res, next) => {
     next(new ExpressError('<img src=\"https://placehold.co/404x404?text=404&font=raleway\">', 404));
 })
+
+
+
 
 //Set up error handlers
 
