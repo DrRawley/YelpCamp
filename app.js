@@ -8,7 +8,8 @@ const methodOverride = require('method-override'); //makes it so we don't have t
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 const Joi = require('joi');
-const { camapgroundSchema } = require('./schemas.js');
+const { campgroundSchema } = require('./schemas.js');
+const { reviewSchema } = require('./schemas.js');
 
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
@@ -32,10 +33,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
 
-//setup a JOI schema to check results
-const validateCampground = (req, res, next) => {
 
-    const { error } = camapgroundSchema.validate(req.body); //validate form data with schema
+//********* JOI Schema Validations **********************************/
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body); //validate form data with schema
     //                                                      deconstruct results
     if (error) {   //if there's an error log it
         const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
@@ -45,6 +46,16 @@ const validateCampground = (req, res, next) => {
         next();
     }
 }
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(', ');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
+
 
 
 
@@ -59,7 +70,7 @@ app.get('/', (req, res) => {
 
 // ********* CAMPGROUND ROUTES **************
 
-//Route for camapground index
+//Route for campground index
 app.get('/campgrounds/', catchAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
@@ -76,7 +87,7 @@ app.post('/campgrounds/', validateCampground, catchAsync(async (req, res, next) 
     res.redirect(`campgrounds/${newCampground._id}`);
 
 }));
-//Show route for single camapground details
+//Show route for single campground details
 app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -109,7 +120,7 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
 // ********* REVIEW ROUTES **************
 
 //Route to submit new review
-app.post('/campgrounds/:id/reviews', catchAsync(async (req, res, next) => {
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res, next) => {
     let { id } = req.params;
     let campground = await Campground.findById(id);
     let review = new Review(req.body.review);
