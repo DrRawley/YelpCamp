@@ -11,6 +11,7 @@ const Joi = require('joi');
 const { campgroundSchema } = require('./schemas.js');
 const { reviewSchema } = require('./schemas.js');
 
+
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
 const catchAsync = require('./utils/catchAsync.js');
@@ -68,7 +69,14 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-// ********* CAMPGROUND ROUTES **************
+// ************************** CAMPGROUND ROUTES *****************************
+//Require Campground route files
+const campgrounds = require('./routes/campgrounds.js');
+app.use('/campgrounds', campgrounds);
+
+
+/* // ********* CAMPGROUND ROUTES **************
+// moved to /routes/campgrounds.js
 
 //Route for campground index
 app.get('/campgrounds/', catchAsync(async (req, res, next) => {
@@ -112,7 +120,7 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     let r = await Campground.findByIdAndDelete(id);
     console.log('BALEETED!');
     res.redirect('/campgrounds/');
-}))
+})) */
 
 // ********* REVIEW ROUTES **************
 
