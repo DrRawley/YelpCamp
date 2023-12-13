@@ -61,6 +61,7 @@ router.put('/:id', validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
+        req.flash('success', 'Edit submitted successfully.');
         res.redirect(`/campgrounds/${r._id}`);
     });
 }));
