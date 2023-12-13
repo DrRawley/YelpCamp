@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const session = require('express-session');
 const path = require('path');
 const mongoose = require('mongoose');
 const Campground = require('./models/campground'); //Include models
@@ -24,7 +25,7 @@ db.once("open", () => {
     console.log("Database connected.");
 });
 
-// Express middleware declarations
+// *********** Express middleware declarations *****************************
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs'); //set default view engine to ejs
 app.set('views', path.join(__dirname, 'views'));
@@ -33,6 +34,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
 app.use(express.static(path.join(__dirname, 'public')));
+//Set up express session
+const sessionConfig = {
+    secret: 'thisshouldbeabettersecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //expire in a week in ms
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true
+    }
+};
+app.use(session(sessionConfig));
+
 
 // ********* Start Express Listening ************                                    
 app.listen(3000, () => {
