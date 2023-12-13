@@ -7,25 +7,24 @@ const Review = require('./models/review');
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
-const Joi = require('joi');
-const { campgroundSchema } = require('./schemas.js');
-const { reviewSchema } = require('./schemas.js');
 
 
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
 const catchAsync = require('./utils/catchAsync.js');
 
+// ************** Start Mongoose *****************
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 // The following mongoose options are no longer needed
 // { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
-
 const db = mongoose.connection; //db is just a shortcut to avoid typing mongoose.connection all the time
+// catch mongoose db connection errors
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected.");
 });
 
+// Express middleware declarations
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs'); //set default view engine to ejs
 app.set('views', path.join(__dirname, 'views'));
@@ -35,31 +34,7 @@ app.use(methodOverride('_method')); /*makes it so we don't have to use the javas
                                     approach patch and delete methods (http verbs).*/
 
 
-//********* JOI Schema Validations **********************************/
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body); //validate form data with schema
-    //                                                      deconstruct results
-    if (error) {   //if there's an error log it
-        const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
-        throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
-        //we only see this if we make it past the client side validation.
-    } else {
-        next();
-    }
-}
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(', ');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
-
-
-
-
+// ********* Start Express Listening ************                                    
 app.listen(3000, () => {
     console.log("Listening on port 3000...");
 });
@@ -74,89 +49,16 @@ app.get('/', (req, res) => {
 const campgrounds = require('./routes/campgrounds.js');
 app.use('/campgrounds', campgrounds);
 
-
-/* // ********* CAMPGROUND ROUTES **************
-// moved to /routes/campgrounds.js
-
-//Route for campground index
-app.get('/campgrounds/', catchAsync(async (req, res, next) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', { campgrounds });
-}));
-//Route to get form for a new campground (come before :id or crash)
-app.get('/campgrounds/new/', (req, res) => {
-    res.render('campgrounds/new');
-});
-//POST route to submit new campground
-app.post('/campgrounds/', validateCampground, catchAsync(async (req, res, next) => {
-    const newCampground = new Campground(req.body.campground);
-    await newCampground.save();
-    res.redirect(`campgrounds/${newCampground._id}`);
-}));
-//Show route for single campground details
-app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews');
-    res.render('campgrounds/show', { campground });
-}));
-//Get edit form route
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id);
-    res.render('campgrounds/edit', { campground });
-}));
-//PUT route to submit edited campground
-app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
-    await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
-        res.redirect(`/campgrounds/${r._id}`);
-    });
-}));
-//DELETE route
-app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-
-    let r = await Campground.findByIdAndDelete(id);
-    console.log('BALEETED!');
-    res.redirect('/campgrounds/');
-})) */
-
-
 // ************************** REVIEW ROUTES *****************************
 //Require Campground route files
 const reviews = require('./routes/reviews.js');
 app.use('/campgrounds/:id/reviews', reviews);
 
-/* // ********* REVIEW ROUTES **************
-//Route to submit new review
-app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res, next) => {
-    let { id } = req.params;
-    let campground = await Campground.findById(id);
-    let review = new Review(req.body.review);
-    console.log(review);
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-
-    res.redirect(`/campgrounds/${campground._id}`);
-}));
-//DELETE route to delete a review
-app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res, next) => {
-    const { id, reviewId } = req.params;
-
-    let campground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true });
-    let review = await Review.findById(reviewId);
-
-    res.redirect(`/campgrounds/${campground._id}`);
-}))
- */
 // ********** ERROR ROUTE CATCHALL ***********
 //Set up 404
 app.all('*', (req, res, next) => {
     next(new ExpressError('<img src=\"https://placehold.co/404x404?text=404&font=raleway\">', 404));
 })
-
 
 
 
