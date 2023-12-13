@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const flash = require('connect-flash');
 const path = require('path');
 const mongoose = require('mongoose');
 const Campground = require('./models/campground'); //Include models
@@ -33,7 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); //Set up public directory
 //Set up express session
 const sessionConfig = {
     secret: 'thisshouldbeabettersecret',
@@ -46,12 +47,21 @@ const sessionConfig = {
     }
 };
 app.use(session(sessionConfig));
+//Enable flash
+app.use(flash());
 
 
 // ********* Start Express Listening ************                                    
 app.listen(3000, () => {
     console.log("Listening on port 3000...");
 });
+
+// Define flash message handlers
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
 
 //Basic route for initial testing
 app.get('/', (req, res) => {
@@ -63,7 +73,7 @@ app.get('/', (req, res) => {
 const campgrounds = require('./routes/campgrounds.js');
 app.use('/campgrounds', campgrounds);
 
-// ************************** REVIEW ROUTES *****************************
+// ************************** REVIEW ROUTES *********************************
 //Require Campground route files
 const reviews = require('./routes/reviews.js');
 app.use('/campgrounds/:id/reviews', reviews);

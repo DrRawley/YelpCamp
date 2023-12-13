@@ -37,10 +37,11 @@ router.get('/', catchAsync(async (req, res, next) => {
 router.get('/new/', (req, res) => {
     res.render('campgrounds/new');
 });
-//POST route to submit new campground
+//POST route to submit **NEW** campground
 router.post('/', validateCampground, catchAsync(async (req, res, next) => {
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
+    req.flash('success', 'Successfully made a new campground.');
     res.redirect(`campgrounds/${newCampground._id}`);
 }));
 //Show route for single campground details
@@ -69,6 +70,8 @@ router.delete('/:id', catchAsync(async (req, res, next) => {
 
     let r = await Campground.findByIdAndDelete(id);
     console.log('BALEETED!');
+
+    req.flash('success', `Successfully deleted ${r.title}.`);
     res.redirect('/campgrounds/');
 }))
 
