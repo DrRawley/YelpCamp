@@ -122,8 +122,13 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     res.redirect('/campgrounds/');
 })) */
 
-// ********* REVIEW ROUTES **************
 
+// ************************** REVIEW ROUTES *****************************
+//Require Campground route files
+const reviews = require('./routes/reviews.js');
+app.use('/campgrounds/:id/reviews', reviews);
+
+/* // ********* REVIEW ROUTES **************
 //Route to submit new review
 app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res, next) => {
     let { id } = req.params;
@@ -145,7 +150,7 @@ app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res, nex
 
     res.redirect(`/campgrounds/${campground._id}`);
 }))
-
+ */
 // ********** ERROR ROUTE CATCHALL ***********
 //Set up 404
 app.all('*', (req, res, next) => {
