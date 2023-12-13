@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
-
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ********* Start Express Listening ************                                    
 app.listen(3000, () => {
