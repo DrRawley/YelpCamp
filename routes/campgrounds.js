@@ -48,12 +48,20 @@ router.post('/', validateCampground, catchAsync(async (req, res, next) => {
 router.get('/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id).populate('reviews');
+    if (!campground) {
+        req.flash('error', 'Campground not found.');
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/show', { campground });
 }));
 //Get edit form route
 router.get('/:id/edit', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
+    if (!campground) {
+        req.flash('error', 'Campground not found.');
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/edit', { campground });
 }));
 //PUT route to submit edited campground
@@ -61,6 +69,10 @@ router.put('/:id', validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
     await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
+        if (!r) {
+            req.flash('error', 'Campground not found. Edit unsuccessful.');
+            return res.redirect('/campgrounds');
+        }
         req.flash('success', 'Edit submitted successfully.');
         res.redirect(`/campgrounds/${r._id}`);
     });
