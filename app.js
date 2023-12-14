@@ -4,11 +4,15 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
 const mongoose = require('mongoose');
-const Campground = require('./models/campground'); //Include models
-const Review = require('./models/review');
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
+const passport = require('passport');
+const localStrategy = require('passport-local');
+//Include models
+const Campground = require('./models/campground');
+const Review = require('./models/review');
+const User = require('./models/user.js');
 
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
@@ -49,6 +53,13 @@ app.use(session(sessionConfig));
 //Enable flash
 app.use(flash());
 
+//Initialize passport
+app.use(passport.initialize());
+app.use(passport.session()); //Needs to come after express session
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 // ********* Start Express Listening ************                                    
 app.listen(3000, () => {
@@ -62,9 +73,14 @@ app.use((req, res, next) => {
     next();
 })
 
-//Basic route for initial testing
+// ******************** Basic routes for initial testing ********************
 app.get('/', (req, res) => {
     res.render('home');
+});
+app.get('/fakeUser', async (req, res, next) => {
+    const user = new User({ email: 'bob@whitehouse.gov', username: 'bob' });
+    const newUser = await User.register(user, 'marley');
+    res.send(newUser)
 });
 
 // ************************** CAMPGROUND ROUTES *****************************
