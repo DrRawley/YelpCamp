@@ -10,7 +10,6 @@ const methodOverride = require('method-override'); //makes it so we don't have t
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 
-
 //Error handing requires
 const ExpressError = require('./utils/ExpressError.js');
 const catchAsync = require('./utils/catchAsync.js');
