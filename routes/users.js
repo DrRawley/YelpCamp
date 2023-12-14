@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
 const catchAsync = require('../utils/catchAsync');
+const { storeReturnTo } = require('../middleware');
 
 router.get('/register', (req, res) => {
     res.render('users/register');
@@ -35,11 +36,14 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login',
+    // use the storeReturnTo in middleware.js to save the returnTo value from session to res.locals    
+    storeReturnTo,
     passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
     catchAsync(async (req, res) => {
         req.flash('success', 'Welcome back!');
-        res.redirect('/campgrounds');
-
+        console.log(res.locals);
+        const redirectUrl = res.locals.returnTo || '/campgrounds'; //use res.locals instead of req.session
+        res.redirect(redirectUrl);
     }));
 
 router.get('/logout', (req, res, next) => {

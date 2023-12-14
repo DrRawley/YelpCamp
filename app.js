@@ -68,6 +68,7 @@ app.listen(3000, () => {
 
 // Define flash message handlers, and logged in info
 app.use((req, res, next) => {
+    console.log(req.session);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
