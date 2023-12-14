@@ -11,6 +11,9 @@ const Review = require('../models/review');
 const ExpressError = require('../utils/ExpressError.js');
 const catchAsync = require('../utils/catchAsync.js');
 
+//Authetication middleware
+const { isLoggedIn } = require('../middleware.js');
+
 //********* JOI Schema Validations **********************************/
 const Joi = require('joi');
 const { campgroundSchema } = require('../schemas.js');
@@ -34,11 +37,12 @@ router.get('/', catchAsync(async (req, res, next) => {
     res.render('campgrounds/index', { campgrounds });
 }));
 //Route to get form for a new campground (come before :id or crash)
-router.get('/new/', (req, res) => {
+router.get('/new/', isLoggedIn, (req, res) => {
+
     res.render('campgrounds/new');
 });
 //POST route to submit **NEW** campground
-router.post('/', validateCampground, catchAsync(async (req, res, next) => {
+router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
     req.flash('success', 'Successfully made a new campground.');
@@ -55,7 +59,7 @@ router.get('/:id', catchAsync(async (req, res, next) => {
     res.render('campgrounds/show', { campground });
 }));
 //Get edit form route
-router.get('/:id/edit', catchAsync(async (req, res, next) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     if (!campground) {
