@@ -35,4 +35,14 @@ router.post('/login',
 
     }));
 
+router.get('/logout', (req, res, next) => {
+    req.logout(function (err) {  //logout now requires a callback function to handle errors
+        if (err) {
+            return next(err);
+        }
+        req.flash('success', 'Goodbye.');
+        res.redirect('/campgrounds');
+    });
+})
+
 module.exports = router;

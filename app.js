@@ -66,8 +66,9 @@ app.listen(3000, () => {
     console.log("Listening on port 3000...");
 });
 
-// Define flash message handlers
+// Define flash message handlers, and logged in info
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
