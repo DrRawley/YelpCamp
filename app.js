@@ -78,20 +78,26 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 app.get('/fakeUser', async (req, res, next) => {
-    const user = new User({ email: 'bob@whitehouse.gov', username: 'bob' });
-    const newUser = await User.register(user, 'marley');
-    res.send(newUser)
+    // const user = new User({ email: 'bob@whitehouse.gov', username: 'bob' });
+    // const newUser = await User.register(user, 'marley');
+    // res.send(newUser)
 });
+
+
+// ******************* User Registration ROUTES *****************************
+//Require User Registration route files
+const userRoutes = require('./routes/users.js');
+app.use('/', userRoutes);
 
 // ************************** CAMPGROUND ROUTES *****************************
 //Require Campground route files
-const campgrounds = require('./routes/campgrounds.js');
-app.use('/campgrounds', campgrounds);
+const campgroundRoutes = require('./routes/campgrounds.js');
+app.use('/campgrounds', campgroundRoutes);
 
 // ************************** REVIEW ROUTES *********************************
 //Require Campground route files
-const reviews = require('./routes/reviews.js');
-app.use('/campgrounds/:id/reviews', reviews);
+const reviewRoutes = require('./routes/reviews.js');
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 
 // ********** ERROR ROUTE CATCHALL ***********
 //Set up 404
