@@ -17,7 +17,7 @@ router.post('/register', catchAsync(async (req, res) => {
             if (err) {
                 return next(err);
             }
-            console.log(registeredUser); //this stuff needs to be in here since async
+            //this stuff needs to be in here since async
             req.flash('success', 'Welcome to YelpCamp!');
             res.redirect('/campgrounds');
         });
@@ -41,7 +41,6 @@ router.post('/login',
     passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
     catchAsync(async (req, res) => {
         req.flash('success', 'Welcome back!');
-        console.log(res.locals);
         const redirectUrl = res.locals.returnTo || '/campgrounds'; //use res.locals instead of req.session
         res.redirect(redirectUrl);
     }));

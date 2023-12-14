@@ -1,11 +1,10 @@
-//Load in base directory, execute from inside node: ".load seeds/index.js"
-
 const loremIpsum = require("lorem-ipsum").loremIpsum;
 const mongoose = require('mongoose');
-const Campground = require('./models/campground'); //Include model
-const cities = require('./seeds/cities');
-const { descriptors, places } = require('./seeds/seedHelpers');
-const images = require('./seeds/images');
+const Campground = require('../models/campground'); //Include models
+const User = require('../models/user')
+const cities = require('../seeds/cities');
+const { descriptors, places } = require('../seeds/seedHelpers');
+const images = require('../seeds/images');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
@@ -39,12 +38,18 @@ const seedDB = async () => {
 //Update database
 const updateDB = async () => {
     const campgrounds = await Campground.find({});
-    var ids = new Array();
+    const users = await User.find({});
+    console.log(users);
+
     for (let i in campgrounds) {
         //await Campground.findByIdAndUpdate(campgrounds[i]._id, { image: sample(images) });
         //await Campground.findByIdAndUpdate(campgrounds[i]._id, { description: loremIpsum({ count: 3 }) });
-        await Campground.findByIdAndUpdate(campgrounds[i]._id, { price: (Math.floor(Math.random() * 40) + 10) });
+        //await Campground.findByIdAndUpdate(campgrounds[i]._id, { price: (Math.floor(Math.random() * 40) + 10) });
+        let randUser = sample(users);
+        console.log(randUser);
+        await Campground.findByIdAndUpdate(campgrounds[i]._id, { author: randUser._id });
 
     }
-    console.log(ids);
 }
+
+
