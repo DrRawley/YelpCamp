@@ -70,20 +70,30 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res, next) => {
     res.render('campgrounds/edit', { campground });
 }));
 //PUT route to submit edited campground
-router.put('/:id', validateCampground, catchAsync(async (req, res, next) => {
+router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
+
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
-    await Campground.findByIdAndUpdate(id, req.body.campground).then(r => {
-        if (!r) {
-            req.flash('error', 'Campground not found. Edit unsuccessful.');
-            return res.redirect('/campgrounds');
-        }
+    let campground = await Campground.findById(id)
+    if (!campground) {
+        console.log('Campground not found.');
+        req.flash('error', 'Campground not found. Edit unsuccessful.');
+        return res.redirect('/campgrounds');
+    };
+
+    if (campground && campground.author.equals(req.user._id)) {
+        await Campground.findByIdAndUpdate(id, req.body.campground)
         req.flash('success', 'Edit submitted successfully.');
-        res.redirect(`/campgrounds/${r._id}`);
-    });
+        return res.redirect(`/campgrounds/${campground._id}`);
+    } else {
+        req.flash('error', 'Not the campground\'s author.');
+        return res.redirect('/campgrounds');
+    }
+
+
 }));
 //DELETE route
-router.delete('/:id', catchAsync(async (req, res, next) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
     let r = await Campground.findByIdAndDelete(id);
