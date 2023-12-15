@@ -8,21 +8,10 @@ const Campground = require('../models/campground'); //Include models
 const Review = require('../models/review');
 
 //Error handing requires
-const ExpressError = require('../utils/ExpressError.js');
 const catchAsync = require('../utils/catchAsync.js');
 
-//********* JOI Schema Validations **********************************/
-const Joi = require('joi');
-const { reviewSchema } = require('../schemas.js');
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(', ');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
+//Middleware includes
+const { validateReview } = require('../middleware.js');
 
 // ********* REVIEW ROUTES **************
 //Route to submit new review

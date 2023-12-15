@@ -8,29 +8,12 @@ const Campground = require('../models/campground'); //Include models
 const Review = require('../models/review');
 
 //Error handing requires
-const ExpressError = require('../utils/ExpressError.js');
 const catchAsync = require('../utils/catchAsync.js');
 
 //Authetication middleware
-const { isLoggedIn } = require('../middleware.js');
+const { isLoggedIn, isAuthor, validateCampground } = require('../middleware.js');
 
-//********* JOI Schema Validations **********************************/
-const Joi = require('joi');
-const { campgroundSchema } = require('../schemas.js');
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body); //validate form data with schema
-    //                                                      deconstruct results
-    if (error) {   //if there's an error log it
-        const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
-        throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
-        //we only see this if we make it past the client side validation.
-    } else {
-        next();
-    }
-}
-
-// ********* CAMPGROUND ROUTES **************
-
+// *********************** CAMPGROUND ROUTES *******************************
 //Route for campground index
 router.get('/', catchAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
@@ -59,8 +42,10 @@ router.get('/:id', catchAsync(async (req, res, next) => {
     }
     res.render('campgrounds/show', { campground });
 }));
+
+
 //Get edit form route
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res, next) => {
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     if (!campground) {
@@ -70,30 +55,16 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res, next) => {
     res.render('campgrounds/edit', { campground });
 }));
 //PUT route to submit edited campground
-router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
-
+router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(req.body.campground); // in html in name="blah[bloh]" --> req.body.blah.bloh
-    let campground = await Campground.findById(id)
-    if (!campground) {
-        console.log('Campground not found.');
-        req.flash('error', 'Campground not found. Edit unsuccessful.');
-        return res.redirect('/campgrounds');
-    };
-
-    if (campground && campground.author.equals(req.user._id)) {
-        await Campground.findByIdAndUpdate(id, req.body.campground)
-        req.flash('success', 'Edit submitted successfully.');
-        return res.redirect(`/campgrounds/${campground._id}`);
-    } else {
-        req.flash('error', 'Not the campground\'s author.');
-        return res.redirect('/campgrounds');
-    }
-
-
+    let campground = await Campground.findByIdAndUpdate(id, req.body.campground)
+    req.flash('success', 'Edit submitted successfully.');
+    return res.redirect(`/campgrounds/${campground._id}`);
 }));
+
 //DELETE route
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res, next) => {
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
     let r = await Campground.findByIdAndDelete(id);
