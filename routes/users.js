@@ -1,58 +1,29 @@
+//Express
 const express = require('express');
 const router = express.Router();
+//Passport
 const passport = require('passport');
+//Model
 const User = require('../models/user');
+//Error handing requires
 const catchAsync = require('../utils/catchAsync');
-const { storeReturnTo } = require('../middleware');
+//Middleware
+const { storeReturnTo } = require('../middleware'); //save the returnTo value into res.locals
 
-router.get('/register', (req, res) => {
-    res.render('users/register');
-});
-router.post('/register', catchAsync(async (req, res) => {
-    const { email, username, password } = req.body;
-    const user = new User({ email, username });
-    try {
-        const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err => {
-            if (err) {
-                return next(err);
-            }
-            //this stuff needs to be in here since async
-            req.flash('success', 'Welcome to YelpCamp!');
-            res.redirect('/campgrounds');
-        });
-    } catch (e) {
-        console.log(e.message);
-        req.flash('error', `E-mail already exists!`);
-        return res.redirect('/register');
-    }
+//Users controller
+const users = require('../controllers/users');
 
+router.get('/register', users.renderRegisterForm);
 
+router.post('/register', catchAsync(users.create));
 
-}));
-
-router.get('/login', (req, res) => {
-    res.render('users/login');
-});
+router.get('/login', users.renderLoginForm);
 
 router.post('/login',
-    // use the storeReturnTo in middleware.js to save the returnTo value from session to res.locals    
-    storeReturnTo,
+    storeReturnTo, // use the storeReturnTo in middleware.js to save the returnTo value from session to res.locals    
     passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
-    catchAsync(async (req, res) => {
-        req.flash('success', 'Welcome back!');
-        const redirectUrl = res.locals.returnTo || '/campgrounds'; //use res.locals instead of req.session
-        res.redirect(redirectUrl);
-    }));
+    catchAsync(users.login));
 
-router.get('/logout', (req, res, next) => {
-    req.logout(function (err) {  //logout now requires a callback function to handle errors
-        if (err) {
-            return next(err);
-        }
-        req.flash('success', 'Goodbye.');
-        res.redirect('/campgrounds');
-    });
-})
+router.get('/logout', users.logout)
 
 module.exports = router;
