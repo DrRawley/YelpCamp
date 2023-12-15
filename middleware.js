@@ -4,7 +4,6 @@ const Campground = require('./models/campground'); //Include models
 const Review = require('./models/review');
 
 module.exports.isLoggedIn = (req, res, next) => {
-
     if (!req.isAuthenticated()) {
         req.session.returnTo = req.originalUrl;  //tracks url unlogged user was trying to access
         req.flash('error', 'You must be logged in to do that.');
