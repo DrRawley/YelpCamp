@@ -1,6 +1,7 @@
 const loremIpsum = require("lorem-ipsum").loremIpsum;
 const mongoose = require('mongoose');
 const Campground = require('../models/campground'); //Include models
+const Review = require('../models/review'); //Include models
 const User = require('../models/user')
 const cities = require('../seeds/cities');
 const { descriptors, places } = require('../seeds/seedHelpers');
@@ -48,6 +49,19 @@ const updateDB = async () => {
         let randUser = sample(users);
         console.log(randUser);
         await Campground.findByIdAndUpdate(campgrounds[i]._id, { author: randUser._id });
+
+    }
+}
+//Update review database
+const updateReviewDB = async () => {
+    const reviews = await Review.find({});
+    const users = await User.find({});
+    console.log(users);
+
+    for (let i in reviews) {
+        let randUser = sample(users);
+        console.log(randUser);
+        await Review.findByIdAndUpdate(reviews[i]._id, { author: randUser._id });
 
     }
 }

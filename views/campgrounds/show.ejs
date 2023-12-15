@@ -27,6 +27,8 @@
 
     </div>
     <div class="col-6">
+
+        <% if (currentUser) { %>
         <h2>Leave a review:</h2>
         <form class="mb-3 validated-form" action="/campgrounds/<%= campground._id %>/reviews" method="POST" novalidate>
             <div class="mb-3">
@@ -41,6 +43,12 @@
             </div>
             <button class="btn btn-success" type="submit">Submit</button>
         </form>
+        <% } else { %>
+        <h4 class="text-secondary mb-3"><a class="link-info" href="/login">Log In</a> or <a class="link-info"
+                href="/register">Sign Up</a> to leave
+            a review.</h4>
+        <% } %>
+
         <div class="mb-3" id="reviewDisplay">
             <% if (campground.reviews.length > 0) { %>
             <h2>Reviews:</h2>
@@ -49,7 +57,8 @@
             <div class="card bm-3">
                 <div class="card-body">
                     <h5 class="card-title"><%= review.rating %>/5</h5>
-                    <p class="card-text">"<%= review.body %>"</p>
+                    <p class="card-text">"<%= review.body %>" &#8209;&#8209;&nbsp;<span
+                            class="text-secondary"><%= review.author %></span></p>
                     <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
                         method="POST">
                         <button class="btn btn-sm btn-danger" type="submit">Delete</button>
