@@ -11,7 +11,7 @@ const Review = require('../models/review');
 const catchAsync = require('../utils/catchAsync.js');
 
 //Middleware includes
-const { validateReview, isLoggedIn } = require('../middleware.js');
+const { validateReview, isLoggedIn, isReviewAuthor } = require('../middleware.js');
 
 // ********* REVIEW ROUTES **************
 //Route to submit new review
@@ -27,7 +27,7 @@ router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res, next) =
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 //DELETE route to delete a review
-router.delete('/:reviewId', isLoggedIn, catchAsync(async (req, res, next) => {
+router.delete('/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(async (req, res, next) => {
     const { id, reviewId } = req.params;
     console.log(req.params);
     //Use $pull command to pull matching review out of the review array in campground

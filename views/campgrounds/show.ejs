@@ -58,11 +58,15 @@
                 <div class="card-body">
                     <h5 class="card-title"><%= review.rating %>/5</h5>
                     <p class="card-text">"<%= review.body %>" &#8209;&#8209;&nbsp;<span
-                            class="text-secondary"><%= review.author %></span></p>
+                            class="text-secondary"><%= review.author.username %></span></p>
+
+                    <% if (currentUser && review.author.equals(currentUser._id)) { %>
                     <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
                         method="POST">
                         <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                     </form>
+                    <% } %>
+
                 </div>
             </div>
             <% } %>

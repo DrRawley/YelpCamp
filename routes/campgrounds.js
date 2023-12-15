@@ -35,7 +35,16 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 //Show route for single campground details
 router.get('/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews').populate('author');
+    //This populates the author in campground, but not also in reviews 
+    //const campground = await Campground.findById(id).populate('reviews').populate('author');
+    const campground = await Campground.findById(id)
+        .populate({  //have to nest an object here to populate what's inside of it.
+            path: 'reviews',   //populate reviews
+            populate: {  //this must be a nested object too
+                path: 'author'  //populate author of each review
+            }
+        })
+        .populate('author'); //populate the campground author
     if (!campground) {
         req.flash('error', 'Campground not found.');
         return res.redirect('/campgrounds');
