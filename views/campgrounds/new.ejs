@@ -14,14 +14,12 @@
                 <input class="form-control" type="text" name="campground[location]" id="location" required>
                 <div class="valid-feedback">Beautiful location!</div>
             </div>
-            <div class="mb3">
-                <input type="file" name="imageFiles" id="imageFiles" multiple>
+            <div class="mb-3">
+                <label for="campImages" class="form-label">Image file(s) upload:</label>
+                <input class="form-control" type="file" name="imageFiles" id="campImages" multiple
+                    accept="image/png, image/gif, image/jpeg">
             </div>
-            <!--             <div class="mb-3">
-                <label class="form-label" for="image">Campground image URL: </label>
-                <input class="form-control" type="text" name="campground[image]" id="image" required>
-                <div class="valid-feedback">Great photo!</div>
-            </div> -->
+
             <div class="mb-3">
                 <label class="form-label" for="price">Price: </label>
                 <div class="input-group">

@@ -17,8 +17,10 @@
                     value="<%= campground.location %>" required>
                 <div class="valide-feedback">Beautiful location!</div>
             </div>
-            <div class="mb3">
-                <input type="file" name="imageFiles" id="imageFiles" multiple>
+            <div class="mb-3">
+                <label for="campImages" class="form-label">Image file(s) upload:</label>
+                <input class="form-control" type="file" name="imageFiles" id="campImages" multiple
+                    accept="image/png, image/gif, image/jpeg">
             </div>
 
             <div class="mb-3">
