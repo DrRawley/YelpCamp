@@ -1,6 +1,8 @@
 //Express
 const express = require('express');
 const router = express.Router();
+const multer = require('multer'); //Multer handles the multipart form, ie file uploading
+const upload = multer({ dest: 'uploads/' });
 
 //Mongoose
 const mongoose = require('mongoose');
@@ -19,8 +21,11 @@ const campgrounds = require('../controllers/campgrounds.js');
 // *********************** CAMPGROUND ROUTES *******************************
 router.route('/')
     .get(catchAsync(campgrounds.index)) //Route for campground index
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.create)); //POST route to submit **NEW** campground
-
+    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.create)); //POST route to submit **NEW** campground
+    .post(upload.array('imageFile', 4), (req, res) => {
+        console.log(req.body, req.files);
+        res.send('Submitted.');
+    })
 //Route to get form for a new campground (come before :id or crash)
 router.get('/new/', isLoggedIn, campgrounds.renderNewForm);
 
