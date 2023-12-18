@@ -19,7 +19,6 @@ module.exports.create = async (req, res, next) => {
 
 module.exports.delete = async (req, res, next) => {
     const { id, reviewId } = req.params;
-    console.log(req.params);
     //Use $pull command to pull matching review out of the review array in campground
     let campground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true });
     await Review.findByIdAndDelete(reviewId);
