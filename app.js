@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") { //For reading development .env keys
+    require('dotenv').config();
+}
+
 const express = require('express');
 const app = express();
 const session = require('express-session');
