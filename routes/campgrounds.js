@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer'); //Multer handles the multipart form, ie file uploading
-const upload = multer({ dest: 'uploads/' });
+const { storage } = require('../cloudinary/index.js'); //node will look for index.js automatically tho
+const upload = multer({ storage });
 
 //Mongoose
 const mongoose = require('mongoose');
