@@ -5,11 +5,29 @@
 <div class="row ">
     <div class="col-6">
         <div class="card mb-3">
-            <% for (image of campground.images) { %>
-            <div class="mb-3">
-                <img src="<%= image.url %>" class="card-img-top" alt="...">
+            <!-- Carousel code -->
+            <div id="campImageCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    <% for (i in campground.images) { %>
+                    <div class="carousel-item <% if (i == 0) { %>active<% } %>">
+                        <img src="<%= campground.images[i].url %>" class="d-block w-100" alt="Campground Image">
+                    </div>
+                    <% } %>
+                </div>
+                <% if (campground.images.length > 1) { %>
+                <button class="carousel-control-prev" type="button" data-bs-target="#campImageCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#campImageCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                <% } %>
             </div>
-            <% } %>
+            <!-- End carousel code -->
             <div class="card-body">
                 <h5 class="card-title"><%= campground.title %></h5>
                 <p class="card-text"><%= campground.description %></p>
