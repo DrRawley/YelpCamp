@@ -29,7 +29,7 @@ router.get('/new/', isLoggedIn, campgrounds.renderNewForm);
 
 router.route('/:id')
     .get(catchAsync(campgrounds.show)) //Show route for single campground details
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.update)) //PUT route to submit edited campground
+    .put(isLoggedIn, isAuthor, upload.array('imageFiles'), /* validateCampground, */ catchAsync(campgrounds.update)) //PUT route to submit edited campground
     .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.delete)); //DELETE route
 
 //Get edit form route

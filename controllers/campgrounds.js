@@ -56,6 +56,13 @@ module.exports.renderEditForm = async (req, res, next) => {
 module.exports.update = async (req, res, next) => {
     const { id } = req.params;
     let campground = await Campground.findByIdAndUpdate(id, req.body.campground)
+    console.log(req.files);
+    if (req.files.length > 0) {
+        newImages = req.files.map(f => ({ url: f.path, filename: f.filename })); //map out an object for every array element
+        // for (let img of newImages) { campground.images.push(img); }
+        campground.images.push(...newImages);  //Does the same thing as the above for loop with the spread operator
+        await campground.save();
+    }
     req.flash('success', 'Edit submitted successfully.');
     return res.redirect(`/campgrounds/${campground._id}`);
 }
