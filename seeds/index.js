@@ -65,5 +65,15 @@ const updateReviewDB = async () => {
 
     }
 }
+//Migrate image info to images
+const migrateImages = async () => {
+    const campgrounds = await Campground.find({});
+    for (let i in campgrounds) {
+        const campground = await Campground.findById(campgrounds[i]._id);
+        const newImage = { url: campground.image, filename: null };
+        campground.images.push(newImage);
+        campground.save();
+    }
+}
 
 

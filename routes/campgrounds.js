@@ -22,11 +22,8 @@ const campgrounds = require('../controllers/campgrounds.js');
 // *********************** CAMPGROUND ROUTES *******************************
 router.route('/')
     .get(catchAsync(campgrounds.index)) //Route for campground index
-    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.create)); //POST route to submit **NEW** campground
-    .post(upload.array('imageFile', 4), (req, res) => {
-        console.log(req.body, req.files);
-        res.send('Submitted.');
-    })
+    .post(isLoggedIn, upload.array('imageFiles'), /* validateCampground, */catchAsync(campgrounds.create)); //POST route to submit **NEW** campground
+
 //Route to get form for a new campground (come before :id or crash)
 router.get('/new/', isLoggedIn, campgrounds.renderNewForm);
 
