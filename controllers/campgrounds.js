@@ -6,8 +6,15 @@ const Campground = require('../models/campground'); //Include models
 const Review = require('../models/review');
 //Cloudinary
 const { cloudinary } = require('../cloudinary/index');
+//Mapbox
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapboxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapboxToken });
 
 module.exports.index = async (req, res, next) => {
+
+
+
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
 }
@@ -42,6 +49,13 @@ module.exports.show = async (req, res, next) => {
         req.flash('error', 'Campground not found.');
         return res.redirect('/campgrounds');
     }
+
+    const geoData = await geocoder.forwardGeocode({
+        query: campground.location,
+        limit: 1
+    }).send();
+    console.log(geoData.body.features[0].geometry.coordinates);
+
     res.render('campgrounds/show', { campground });
 }
 
