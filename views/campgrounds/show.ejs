@@ -124,12 +124,9 @@
 </div>
 
 <script>
-    mapboxgl.accessToken = '<%- process.env.MAPBOX_TOKEN %>';
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        //center: [-74.5, 40], // starting position [lng, lat]
-        center: ['<%- campground.geometry.long %>', '<%- campground.geometry.lat %>'], // starting position [lng, lat]
-        zoom: 9, // starting zoom
-    });
+    const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+    const long = '<%- campground.geometry.long %>';
+    const lat = '<%- campground.geometry.lat %>';
 </script>
+
+<script src="/js/map.js"></script>
