@@ -2,7 +2,7 @@ mapboxgl.accessToken = mapToken;
 const map = new mapboxgl.Map({
     container: 'map',
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-    style: 'mapbox://styles/mapbox/dark-v11',
+    style: 'mapbox://styles/mapbox/outdoors-v12',
     center: [-103.5917, 40.6699],
     zoom: 3
 });
@@ -34,19 +34,19 @@ map.on('load', () => {
             'circle-color': [
                 'step',
                 ['get', 'point_count'],
-                '#51bbd6',
-                100,
-                '#f1f075',
-                750,
-                '#f28cb1'
+                '#2196F3',//'#51bbd6',
+                10,
+                '#9C27B0', //'#f1f075',
+                30,
+                '#f44336', //'#f28cb1'
             ],
             'circle-radius': [
                 'step',
                 ['get', 'point_count'],
                 20,
-                100,
+                10,
                 30,
-                750,
+                30,
                 40
             ]
         }
@@ -70,10 +70,10 @@ map.on('load', () => {
         source: 'campgrounds',
         filter: ['!', ['has', 'point_count']],
         paint: {
-            'circle-color': '#11b4da',
+            'circle-color': 'white',//'#11b4da',
             'circle-radius': 4,
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#fff'
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#f44336' //#fff'
         }
     });
 

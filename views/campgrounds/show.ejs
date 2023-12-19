@@ -9,8 +9,7 @@
             <div id="campImageCarousel" class="carousel slide">
                 <div class="carousel-inner">
                     <% if (!campground.images.length) { %>
-                    <img src="https://placehold.co/600x400/EEE/31343C?font=raleway&text=No Image" alt=""
-                        class="img-fluid">
+                    <img src="/NoImage.svg" alt="" class="d-block w-100">
                     <% } %>
                     <% for (i in campground.images) { %>
                     <div class="carousel-item <% if (i == 0) { %>active<% } %>">
