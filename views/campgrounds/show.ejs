@@ -4,6 +4,7 @@
 
 <div class="row ">
     <div class="col-6">
+        <div id='map' style='width: 100%; height: 300px;' class="mb-3"></div>
         <div class="card mb-3">
             <!-- Carousel code -->
             <div id="campImageCarousel" class="carousel slide">
@@ -121,3 +122,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    mapboxgl.accessToken = '<%- process.env.MAPBOX_TOKEN %>';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        //center: [-74.5, 40], // starting position [lng, lat]
+        center: ['<%- campground.geometry.long %>', '<%- campground.geometry.lat %>'], // starting position [lng, lat]
+        zoom: 9, // starting zoom
+    });
+</script>
