@@ -1,8 +1,10 @@
 <%  // Don't autoformat this file. Use ctrl-K ctrl-shift-S %>
 <% // Check to make sure ejs escaped tags aren't messed up %>
+
+<script>const mapToken = '<%- process.env.MAPBOX_TOKEN %>';</script>
+
 <% if (typeof campground == 'object') { %>
 <script>
-    const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
     const long = <%- campground.geometry.long %>;
     const lat = <%- campground.geometry.lat %>;
     const campground = <%- JSON.stringify(campground) %>;
@@ -10,7 +12,30 @@
 <% } %>
 
 <% if (typeof campgrounds == 'object') { %>
+    <% let campsGeoData = {
+        type: "FeatureCollection",
+        features: []
+    };
+    for (let camp of campgrounds) {
+        let campGeoData = {
+            type: 'Feature',
+            properties: {
+                id: camp._id,
+                title: camp.title,
+                location: camp.location,
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [camp.geometry.long, camp.geometry.lat]
+            }
+        }
+        campsGeoData.features.push(campGeoData);
+    }
+        
+        
+        %>
 <script>
-    const campgrounds = <%- JSON.stringify(campgrounds) %>;
+    const campsGeoData = <%- JSON.stringify(campsGeoData) %>;
+    //const campgrounds = <%- //JSON.stringify(campgrounds) %>;
 </script>
 <% } %>
