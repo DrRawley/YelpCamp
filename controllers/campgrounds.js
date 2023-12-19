@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Campground = require('../models/campground'); //Include models
 const Review = require('../models/review');
+//Cloudinary
+const { cloudinary } = require('../cloudinary/index');
 
 module.exports.index = async (req, res, next) => {
     const campgrounds = await Campground.find({});
@@ -55,8 +57,22 @@ module.exports.renderEditForm = async (req, res, next) => {
 
 module.exports.update = async (req, res, next) => {
     const { id } = req.params;
-    let campground = await Campground.findByIdAndUpdate(id, req.body.campground)
-    console.log(req.body);
+    let campground = await Campground.findByIdAndUpdate(id, req.body.campground);
+
+    if (req.body.deleteImages) {
+        for (let delImg of req.body.deleteImages) {
+            if (delImg) {
+                console.log('Image to delete:', delImg);
+                await cloudinary.uploader.destroy(delImg)
+                await campground.updateOne({ $pull: { images: { filename: { $in: delImg } } } });
+            } else {
+                console.log('Image is not a cloudinary image.');
+            }
+        }
+    } else {
+        console.log('No images to delete.');
+    }
+
     if (req.files.length > 0) {
         newImages = req.files.map(f => ({ url: f.path, filename: f.filename })); //map out an object for every array element
         // for (let img of newImages) { campground.images.push(img); }
