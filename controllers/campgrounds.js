@@ -56,7 +56,7 @@ module.exports.renderEditForm = async (req, res, next) => {
 module.exports.update = async (req, res, next) => {
     const { id } = req.params;
     let campground = await Campground.findByIdAndUpdate(id, req.body.campground)
-    console.log(req.files);
+    console.log(req.body);
     if (req.files.length > 0) {
         newImages = req.files.map(f => ({ url: f.path, filename: f.filename })); //map out an object for every array element
         // for (let img of newImages) { campground.images.push(img); }

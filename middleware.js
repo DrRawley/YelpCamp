@@ -58,7 +58,6 @@ module.exports.validateCampground = (req, res, next) => {
     //                                                      deconstruct results
     if (error) {   //if there's an error log it
         const msg = error.details.map(el => el.message).join(', ') //account for multiple errors
-        console.log(id);
         throw new ExpressError(msg, 400);  //throw the errors so the error handler can report
         //we only see this if we make it past the client side validation.
     } else {
