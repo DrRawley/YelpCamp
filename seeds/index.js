@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") { //For reading development .env keys
+    require('dotenv').config({ path: '../.env' });
+}
+
 const loremIpsum = require("lorem-ipsum").loremIpsum;
 const mongoose = require('mongoose');
 const Campground = require('../models/campground'); //Include models
@@ -6,6 +10,10 @@ const User = require('../models/user')
 const cities = require('../seeds/cities');
 const { descriptors, places } = require('../seeds/seedHelpers');
 const images = require('../seeds/images');
+//Mapbox
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapboxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapboxToken });
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
@@ -75,5 +83,24 @@ const migrateImages = async () => {
         campground.save();
     }
 }
+//Populate geo data
+const addCoordinates = async () => {
+    const campgrounds = await Campground.find({});
 
+    for (let i in campgrounds) {
+        const campground = await Campground.findById(campgrounds[i]._id);
+
+        const geoData = await geocoder.forwardGeocode({
+            query: campground.location,
+            limit: 1
+        }).send();
+        //console.log(geoData.body.features[0].geometry.coordinates);
+
+        campground.geometry = geoData.body.features[0].geometry;
+        console.log(campground.geometry);
+
+        campground.save();
+    }
+
+}
 

@@ -27,6 +27,11 @@ module.exports.create = async (req, res, next) => {
     const newCampground = new Campground(req.body.campground);
     newCampground.images = req.files.map(f => ({ url: f.path, filename: f.filename })); //map out an object for every array element
     newCampground.author = req.user._id;
+    const geoData = await geocoder.forwardGeocode({
+        query: newCampground.location,
+        limit: 1
+    }).send();
+    newCampground.geometry = geoData.body.features[0].geometry;
     await newCampground.save();
     console.log(newCampground);
     req.flash('success', 'Successfully made a new campground.');
@@ -50,11 +55,7 @@ module.exports.show = async (req, res, next) => {
         return res.redirect('/campgrounds');
     }
 
-    const geoData = await geocoder.forwardGeocode({
-        query: campground.location,
-        limit: 1
-    }).send();
-    console.log(geoData.body.features[0].geometry.coordinates);
+
 
     res.render('campgrounds/show', { campground });
 }

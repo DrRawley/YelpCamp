@@ -23,6 +23,23 @@ ImageSchema.virtual('thumbnailable').get(function () {
     }
 });
 
+const pointSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        enum: ['Point'],
+        required: true
+    },
+    coordinates: {
+        type: [Number],
+        required: true
+    }
+});
+pointSchema.virtual('lat').get(function () {
+    return this.coordinates[1];
+});
+pointSchema.virtual('long').get(function () {
+    return this.coordinates[0];
+});
 
 const CampgroundSchema = new Schema({
     title: String,
@@ -31,6 +48,7 @@ const CampgroundSchema = new Schema({
     price: Number,
     description: String,
     location: String,
+    geometry: pointSchema,
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
