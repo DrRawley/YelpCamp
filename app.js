@@ -8,6 +8,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
 const mongoose = require('mongoose');
+const mongoSanitize = require('express-mongo-sanitize');
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
@@ -42,6 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); /*makes it so we don't have to use the javascript 
                                     approach patch and delete methods (http verbs).*/
 app.use(express.static(path.join(__dirname, 'public'))); //Set up public directory
+app.use(mongoSanitize());  //Use the sanitizer to help prevent db injection attacks
 //Set up express session
 const sessionConfig = {
     secret: 'thisshouldbeabettersecret',
@@ -72,6 +74,7 @@ app.listen(3000, () => {
 
 // Define flash message handlers, and logged in info
 app.use((req, res, next) => {
+    console.log(req.query);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
