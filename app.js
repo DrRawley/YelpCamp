@@ -62,7 +62,62 @@ app.use(session(sessionConfig));
 //Enable flash
 app.use(flash());
 //Enable helmet
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet());
+//app.use(helmet({ contentSecurityPolicy: false }));
+//Setup helmet
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://events.mapbox.com/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/"
+];
+const connectSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://tiles.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://events.mapbox.com/"
+
+];
+const fontSrcUrls = [];
+const imgSrcUrls = [
+    "https://res.cloudinary.com/dwu3qgva6/",
+    "https://images.unsplash.com/",
+    "*" //Allow ALL images from anywhere.  Should probably limit this in the future.
+];
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: [],
+                connectSrc: ["'self'", ...connectSrcUrls],
+                scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls], //should use nonce instead of unsafe-inline
+                styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+                workerSrc: ["'self'", "blob:"],
+                objectSrc: ["'self'"],
+                imgSrc: ["'self'", "blob:", "data:", ...imgSrcUrls],
+                fontSrc: ["'self'", ...fontSrcUrls]
+            }
+        }
+    })
+);
+
+
+
 
 //Initialize passport
 app.use(passport.initialize());
