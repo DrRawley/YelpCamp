@@ -46,12 +46,14 @@ app.use(express.static(path.join(__dirname, 'public'))); //Set up public directo
 app.use(mongoSanitize());  //Use the sanitizer to help prevent db injection attacks
 //Set up express session
 const sessionConfig = {
+    name: 'session', //should probably change this
     secret: 'thisshouldbeabettersecret',
     resave: false,
     saveUninitialized: true,
     cookie: {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //expire in a week in ms
         maxAge: 1000 * 60 * 60 * 24 * 7,
+        //secure: true, //only allow cookies over https://
         httpOnly: true
     }
 };
