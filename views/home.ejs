@@ -20,7 +20,7 @@
                     <a href="#" class="nav-link active" aria-current="page">Home</a>
                     <a href="/campgrounds" class="nav-link">Campgrounds</a>
                     <% if (!currentUser) { %>
-                    <a href="/login" class="nav-link link-light">Log In</a>
+                    <a href="/login" class="nav-link">Log In</a>
                     <a href="/register" class="nav-link">Sign Up</a>
                     <% } else { %>
                     <span class="person"><%= currentUser.username %></span>
