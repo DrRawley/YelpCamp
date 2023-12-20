@@ -116,7 +116,8 @@ map.on('load', () => {
         new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(
-                `<a href="/campgrounds/${id}">${title}</a><br>${location}`
+                //Consider making this a virtual property.  will need to use 'const opts = {toJSON: {virtuals: true}}; in model file
+                `<a href="/campgrounds/${id}" style="color: black; text-decoration: none">${title}</a><br>${location}`
             )
             .addTo(map);
     });
