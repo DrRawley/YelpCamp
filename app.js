@@ -14,6 +14,7 @@ const methodOverride = require('method-override'); //makes it so we don't have t
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
 const passport = require('passport');
 const localStrategy = require('passport-local');
+const helmet = require('helmet'); //helmet security
 //Include models
 const Campground = require('./models/campground');
 const Review = require('./models/review');
@@ -60,6 +61,8 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 //Enable flash
 app.use(flash());
+//Enable helmet
+app.use(helmet({ contentSecurityPolicy: false }));
 
 //Initialize passport
 app.use(passport.initialize());
