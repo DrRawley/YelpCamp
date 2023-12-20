@@ -23,8 +23,8 @@
                     <a href="/login" class="nav-link link-light">Log In</a>
                     <a href="/register" class="nav-link">Sign Up</a>
                     <% } else { %>
-                    <span class="navbar-text"><%= currentUser.username %></span>
-                    <span class="navbar-text">
+                    <span class="person"><%= currentUser.username %></span>
+                    <span class="person person-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                             class="bi bi-person" viewBox="0 0 16 16">
                             <path
@@ -38,10 +38,10 @@
 
         <main class="px-3">
             <h1>YelpCamp</h1>
-            <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem ipsum quo, quasi explicabo
-                maiores, molestiae fugiat, perferendis repellendus nemo fuga excepturi! Accusantium nihil odio quasi
-                error, nostrum repellendus temporibus voluptatum!</p>
-            <a href="/campground" class="btn btn-lrg btn-secondary fw-bold text-white bg-white">View Campgrounds</a>
+            <p class="lead">Welcome to YelpCamp! <br>Jump right in and explore our many campgrounds.
+                <br>Feel free to share some of your own and comment on others.
+            </p>
+            <a href="/campgrounds" class="btn btn-lrg btn-secondary fw-bold  bg-white">View Campgrounds</a>
         </main>
 
 
