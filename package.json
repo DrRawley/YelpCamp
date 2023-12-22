@@ -1,7 +1,10 @@
 {
+  "engines": {
+    "node": "20.10.0"
+  },
   "name": "yelpcamp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Completed YelpCamp project from Colt Steele's Web Development Bootcamp.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
