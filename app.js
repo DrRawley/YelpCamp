@@ -1,20 +1,26 @@
 if (process.env.NODE_ENV !== "production") { //For reading development .env keys
     require('dotenv').config();
 }
-
+const path = require('path');
+//Express stuff
 const express = require('express');
 const app = express();
+//Session stuff
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
+//Flash messaging util
 const flash = require('connect-flash');
-const path = require('path');
+// Mongoose stuff
 const mongoose = require('mongoose');
 const mongoSanitize = require('express-mongo-sanitize');
 const methodOverride = require('method-override'); //makes it so we don't have to use the  
 //                              javascript approach patch and delete methods (http verbs).
 const ejsMate = require('ejs-mate'); //allows to make templates in our .ejs files
+//Passport for user login stuff
 const passport = require('passport');
 const localStrategy = require('passport-local');
-const helmet = require('helmet'); //helmet security
+//Helmet security
+const helmet = require('helmet');
 //Include models
 const Campground = require('./models/campground');
 const Review = require('./models/review');
@@ -47,8 +53,19 @@ app.use(methodOverride('_method')); /*makes it so we don't have to use the javas
                                     approach patch and delete methods (http verbs).*/
 app.use(express.static(path.join(__dirname, 'public'))); //Set up public directory
 app.use(mongoSanitize());  //Use the sanitizer to help prevent db injection attacks
-//Set up express session
+//***************** Set up express session **********************************
+const store = MongoStore.create({  //Note: this differs from the video in new versions
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret'
+    }
+});
+store.on("error", function (e) {
+    console.log('Store error.', e);
+})
 const sessionConfig = {
+    store,
     name: 'session', //should probably change this
     secret: 'thisshouldbeabettersecret',
     resave: false,
