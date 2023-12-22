@@ -25,14 +25,16 @@ const ExpressError = require('./utils/ExpressError.js');
 const catchAsync = require('./utils/catchAsync.js');
 
 // ************** Start Mongoose *****************
-mongoose.connect('mongodb://localhost:27017/yelp-camp');
+const dbUrl = process.env.DB_URL;
+//mongoose.connect('mongodb://localhost:27017/yelp-camp');
+mongoose.connect(dbUrl);
 // The following mongoose options are no longer needed
 // { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
 const db = mongoose.connection; //db is just a shortcut to avoid typing mongoose.connection all the time
 // catch mongoose db connection errors
 db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-    console.log("Database connected.");
+db.once("open", (e) => {
+    console.log("Database connected.", e);
 });
 
 // *********** Express middleware declarations *****************************
